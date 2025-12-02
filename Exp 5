@@ -1,0 +1,135 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int coeff, pow;
+    Node* next;
+    Node(int c, int p) {
+        coeff = c;
+        pow = p;
+        next = NULL;
+    }
+};
+
+void insertTerm(Node*& poly, int coeff, int pow) {
+    Node* newNode = new Node(coeff, pow);
+
+    if (!poly || poly->pow < pow) {
+        newNode->next = poly;
+        poly = newNode;
+        return;
+    }
+
+    Node* temp = poly;
+    while (temp->next && temp->next->pow > pow)
+        temp = temp->next;
+
+    if (temp->pow == pow) {
+        temp->coeff += coeff;
+    }
+    else {
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
+}
+
+Node* addPoly(Node* p1, Node* p2) {
+    Node* res = NULL;
+
+    while (p1 || p2) {
+        if (!p2 || (p1 && p1->pow > p2->pow)) {
+            insertTerm(res, p1->coeff, p1->pow);
+            p1 = p1->next;
+        }
+        else if (!p1 || p2->pow > p1->pow) {
+            insertTerm(res, p2->coeff, p2->pow);
+            p2 = p2->next;
+        }
+        else {
+            insertTerm(res, p1->coeff + p2->coeff, p1->pow);
+            p1 = p1->next;
+            p2 = p2->next;
+        }
+    }
+    return res;
+}
+
+Node* subtractPoly(Node* p1, Node* p2) {
+    Node* res = NULL;
+
+    while (p1 || p2) {
+        if (!p2 || (p1 && p1->pow > p2->pow)) {
+            insertTerm(res, p1->coeff, p1->pow);
+            p1 = p1->next;
+        }
+        else if (!p1 || p2->pow > p1->pow) {
+            insertTerm(res, -p2->coeff, p2->pow);
+            p2 = p2->next;
+        }
+        else {
+            insertTerm(res, p1->coeff - p2->coeff, p1->pow);
+            p1 = p1->next;
+            p2 = p2->next;
+        }
+    }
+    return res;
+}
+
+Node* multiplyPoly(Node* p1, Node* p2) {
+    Node* res = NULL;
+
+    for (Node* t1 = p1; t1; t1 = t1->next) {
+        for (Node* t2 = p2; t2; t2 = t2->next) {
+            insertTerm(res, t1->coeff * t2->coeff, t1->pow + t2->pow);
+        }
+    }
+    return res;
+}
+
+void display(Node* poly) {
+    while (poly) {
+        cout << poly->coeff << "x^" << poly->pow;
+        poly = poly->next;
+        if (poly) cout << " + ";
+    }
+    cout << endl;
+}
+
+int main() {
+    Node *p1 = NULL, *p2 = NULL;
+    int n, c, p;
+
+    cout << "Enter number of terms for Polynomial 1: ";
+    cin >> n;
+    cout << "Enter coeff and power:\n";
+    for(int i=0;i<n;i++){
+        cin >> c >> p;
+        insertTerm(p1, c, p);
+    }
+
+    cout << "Enter number of terms for Polynomial 2: ";
+    cin >> n;
+    cout << "Enter coeff and power:\n";
+    for(int i=0;i<n;i++){
+        cin >> c >> p;
+        insertTerm(p2, c, p);
+    }
+
+    cout << "\nPolynomial 1: ";
+    display(p1);
+
+    cout << "Polynomial 2: ";
+    display(p2);
+
+    cout << "\nAddition: ";
+    display(addPoly(p1, p2));
+
+    cout << "Subtraction: ";
+    display(subtractPoly(p1, p2));
+
+    cout << "Multiplication: ";
+    display(multiplyPoly(p1, p2));
+
+    return 0;
+}
