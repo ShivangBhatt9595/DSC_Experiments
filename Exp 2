@@ -1,0 +1,123 @@
+#include <iostream>
+using namespace std;
+
+/** void traverse(int arr[], int n){
+    cout << "Array: ";
+    for(int i=0;i<n;i++) cout << arr[i] << " ";
+    cout << endl;
+}
+
+int searchElement(int arr[], int n, int key){
+    for(int i=0;i<n;i++)
+        if(arr[i] == key) return i;
+    return -1;
+}
+
+int insertElement(int arr[], int n, int pos, int value){
+    for(int i=n;i>pos;i--) arr[i] = arr[i-1];
+    arr[pos] = value;
+    return n+1;
+}
+
+int deleteElement(int arr[], int n, int pos){
+    for(int i=pos;i<n-1;i++) arr[i] = arr[i+1];
+    return n-1;
+}
+
+int main(){
+    int arr[100], n;
+
+    cout << "Enter size: ";
+    cin >> n;
+
+    cout << "Enter elements: ";
+    for(int i=0;i<n;i++) cin >> arr[i];
+
+    traverse(arr,n);
+
+    int key;
+    cout << "Search element: ";
+    cin >> key;
+    cout << "Index = " << searchElement(arr,n,key) << endl;
+
+    int pos, val;
+    cout << "Insert position and value: ";
+    cin >> pos >> val;
+    n = insertElement(arr,n,pos,val);
+    traverse(arr,n);
+
+    cout << "Delete position: ";
+    cin >> pos;
+    n = deleteElement(arr,n,pos);
+    traverse(arr,n);
+
+    return 0;
+}
+**/
+
+// Self Work
+
+//1.
+/**#include <iostream>
+using namespace std;
+
+int deleteAllOccurrences(int arr[], int n, int key){
+    int j = 0;
+    for(int i=0;i<n;i++)
+        if(arr[i] != key)
+            arr[j++] = arr[i];
+    return j;
+}
+
+int main(){
+    int arr[100], n, key;
+
+    cout << "Enter size: ";
+    cin >> n;
+
+    cout << "Enter elements: ";
+    for(int i=0;i<n;i++) cin >> arr[i];
+
+    cout << "Enter element to delete: ";
+    cin >> key;
+
+    n = deleteAllOccurrences(arr,n,key);
+
+    cout << "Array after deletion: ";
+    for(int i=0;i<n;i++) cout << arr[i] << " ";
+}**/
+
+//2
+/**#include <iostream>
+using namespace std;
+
+void frequency(int arr[], int n){
+    bool vis[100] = {false};
+
+    for(int i=0;i<n;i++){
+        if(vis[i]) continue;
+
+        int count = 1;
+        for(int j=i+1;j<n;j++){
+            if(arr[j] == arr[i]){
+                count++;
+                vis[j] = true;
+            }
+        }
+        cout << arr[i] << " : " << count << endl;
+    }
+}
+
+int main(){
+    int arr[100], n;
+
+    cout << "Enter size: ";
+    cin >> n;
+
+    cout << "Enter elements: ";
+    for(int i=0;i<n;i++) cin >> arr[i];
+
+    cout << "Frequencies:\n";
+    frequency(arr,n);
+}
+**/
