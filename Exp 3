@@ -1,0 +1,149 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* next;
+
+    Node(int val) {
+        data = val;
+        next = NULL;
+    }
+};
+
+Node* head = NULL;
+
+// Traversal
+void traverse() {
+    if (!head) {
+        cout << "List is empty\n";
+        return;
+    }
+    Node* temp = head;
+    cout << "Linked List: ";
+    while (temp) {
+        cout << temp->data << " ";
+        temp = temp->next;
+    }
+    cout << endl;
+}
+
+// Searching
+void searchElement(int key) {
+    Node* temp = head;
+    int pos = 0;
+
+    while (temp) {
+        if (temp->data == key) {
+            cout << "Element found at position " << pos << endl;
+            return;
+        }
+        temp = temp->next;
+        pos++;
+    }
+
+    cout << "Element not found\n";
+}
+
+// Insert at any position
+void insertPos(int val, int pos) {
+    Node* newNode = new Node(val);
+
+    // Case 1: insert at head OR list empty
+    if (pos <= 0 || head == NULL) {
+        newNode->next = head;
+        head = newNode;
+        return;
+    }
+
+    Node* temp = head;
+    int curr = 0;
+
+    // Move until pos-1 or end of list
+    while (temp->next != NULL && curr < pos - 1) {
+        temp = temp->next;
+        curr++;
+    }
+
+    // Insert at end or middle
+    newNode->next = temp->next;
+    temp->next = newNode;
+}
+
+
+// Delete at any position
+void deletePos(int pos) {
+    if (!head) {
+        cout << "List is empty\n";
+        return;
+    }
+
+    Node* temp = head;
+
+    if (pos == 0) {
+        head = head->next;
+        delete temp;
+        return;
+    }
+
+    for (int i = 0; i < pos - 1 && temp; i++)
+        temp = temp->next;
+
+    if (!temp || !temp->next) {
+        cout << "Invalid position\n";
+        return;
+    }
+
+    Node* delNode = temp->next;
+    temp->next = temp->next->next;
+    delete delNode;
+}
+
+// Main Menu
+int main() {
+    int choice, val, pos, key;
+
+    while (true) {
+        cout << "\nMENU\n";
+        cout << "1. Traverse\n";
+        cout << "2. Search\n";
+        cout << "3. Insert\n";
+        cout << "4. Delete\n";
+        cout << "5. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                traverse();
+                break;
+
+            case 2:
+                cout << "Enter value to search: ";
+                cin >> key;
+                searchElement(key);
+                break;
+
+            case 3:
+                cout << "Enter value to insert: ";
+                cin >> val;
+                cout << "Enter position: ";
+                cin >> pos;
+                insertPos(val, pos);
+                break;
+
+            case 4:
+                cout << "Enter position to delete: ";
+                cin >> pos;
+                deletePos(pos);
+                break;
+
+            case 5:
+                return 0;
+
+            default:
+                cout << "Invalid choice\n";
+        }
+    }
+}
