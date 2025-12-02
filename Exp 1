@@ -1,0 +1,121 @@
+1)
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+// Exceptions
+class BookNotFoundException {};
+class MemberNotFoundException {};
+class BookNotAvailableException {};
+// Book Class
+class Book {
+public:
+    string title, author, ISBN;
+    bool available;
+    Book(string t, string a, string i)
+        : title(t), author(a), ISBN(i), available(true) {}
+};
+// Base User Class
+class User {
+public:
+    string userID, name;
+    User(string id, string n) : userID(id), name(n) {}
+    virtual void role() { cout << "User Action\n"; }
+};
+// Member Class
+class Member : public User {
+public:
+    vector<string> borrowedBooks;
+    Member(string id, string n) : User(id, n) {}
+    void borrowBook(string isbn) {
+        borrowedBooks.push_back(isbn);
+    }
+    void returnBook(string isbn) {
+        borrowedBooks.erase(
+            remove(borrowedBooks.begin(), borrowedBooks.end(), isbn),
+            borrowedBooks.end());
+    }
+    void role() override { cout << "Member Action\n"; }
+};
+// Library Class
+class Library {
+public:
+    vector<Book> books;
+    vector<Member> members;
+    Book& findBook(string isbn) {
+        for (auto &b : books)
+            if (b.ISBN == isbn) return b;
+        throw BookNotFoundException();
+    }
+    Member& findMember(string id) {
+        for (auto &m : members)
+            if (m.userID == id) return m;
+        throw MemberNotFoundException();
+    }
+    void addBook() {
+    string t, a, i;
+    cin.ignore();  // FIX: clear buffer
+    cout << "Enter Title: ";
+    getline(cin, t);   // FIX: reads full line
+    cout << "Enter Author: ";
+    getline(cin, a);
+    cout << "Enter ISBN: ";
+    cin >> i;
+    books.push_back(Book(t, a, i));
+    cout << "Book Added.\n";
+}
+   void addMember() {
+    string id, n;
+    cout << "Enter Member ID: ";
+    cin >> id;
+    cin.ignore();
+    cout << "Enter Name: ";
+    getline(cin, n);
+    members.push_back(Member(id, n));
+    cout << "Member Added.\n";
+}
+    void issueBook() {
+        string id, isbn;
+        cout << "Enter Member ID: ";
+        cin >> id;
+        cout << "Enter ISBN to Issue: ";
+        cin >> isbn;
+        Book &b = findBook(isbn);
+        if (!b.available) throw BookNotAvailableException();
+        Member &m = findMember(id);
+        b.available = false;
+        m.borrowBook(isbn);
+        cout << "Book Issued.\n";
+    }
+    void returnBook() {
+        string id, isbn;
+        cout << "Enter Member ID: ";
+        cin >> id;
+        cout << "Enter ISBN to Return: ";
+        cin >> isbn;
+        Book &b = findBook(isbn);
+        Member &m = findMember(id);
+        b.available = true;
+        m.returnBook(isbn);
+        cout << "Book Returned.\n";
+    }
+};
+int main() {
+    Library lib;
+    int choice;
+    while (true) {
+        cout << "\n1. Add Book\n2. Add Member\n3. Issue Book\n4. Return Book\n5. Exit\nChoice: ";
+        cin >> choice;
+        try {
+            if (choice == 1) lib.addBook();
+            else if (choice == 2) lib.addMember();
+            else if (choice == 3) lib.issueBook();
+            else if (choice == 4) lib.returnBook();
+            else if (choice == 5) break;
+        }
+        catch (BookNotFoundException) { cout << "Error: Book Not Found\n"; }
+        catch (MemberNotFoundException) { cout << "Error: Member Not Found\n"; }
+        catch (BookNotAvailableException) { cout << "Error: Book Not Available\n"; }
+    }
+    return 0;
+}
