@@ -1,0 +1,155 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node *prev, *next;
+
+    Node(int val) {
+        data = val;
+        prev = next = NULL;
+    }
+};
+
+Node* head = NULL;
+
+// Traverse (forward)
+void traverse() {
+    if (!head) {
+        cout << "List is empty\n";
+        return;
+    }
+    Node* temp = head;
+    cout << "DLL: ";
+    while (temp) {
+        cout << temp->data << " ";
+        temp = temp->next;
+    }
+    cout << endl;
+}
+
+// Search
+void searchElement(int key) {
+    Node* temp = head;
+    int pos = 0;
+
+    while (temp) {
+        if (temp->data == key) {
+            cout << "Found at position " << pos << endl;
+            return;
+        }
+        temp = temp->next;
+        pos++;
+    }
+    cout << "Not found\n";
+}
+
+// Insert at any position
+void insertPos(int val, int pos) {
+    Node* newNode = new Node(val);
+
+    // Insert at start
+    if (pos <= 0 || head == NULL) {
+        newNode->next = head;
+        if (head) head->prev = newNode;
+        head = newNode;
+        return;
+    }
+
+    Node* temp = head;
+    int curr = 0;
+
+    // Move to (pos - 1) OR last node
+    while (temp->next && curr < pos - 1) {
+        temp = temp->next;
+        curr++;
+    }
+
+    newNode->next = temp->next;
+    newNode->prev = temp;
+
+    if (temp->next) temp->next->prev = newNode;
+    temp->next = newNode;
+}
+
+// Delete at any position
+void deletePos(int pos) {
+    if (!head) {
+        cout << "List is empty\n";
+        return;
+    }
+
+    Node* temp = head;
+
+    // delete first node
+    if (pos <= 0) {
+        head = temp->next;
+        if (head) head->prev = NULL;
+        delete temp;
+        return;
+    }
+
+    int curr = 0;
+    while (temp && curr < pos) {
+        temp = temp->next;
+        curr++;
+    }
+
+    if (!temp) {
+        cout << "Invalid position\n";
+        return;
+    }
+
+    if (temp->next) temp->next->prev = temp->prev;
+    if (temp->prev) temp->prev->next = temp->next;
+
+    delete temp;
+}
+
+int main() {
+    int choice, val, pos, key;
+
+    while (true) {
+        cout << "\nMENU\n";
+        cout << "1. Traverse\n";
+        cout << "2. Search\n";
+        cout << "3. Insert\n";
+        cout << "4. Delete\n";
+        cout << "5. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                traverse();
+                break;
+
+            case 2:
+                cout << "Enter value to search: ";
+                cin >> key;
+                searchElement(key);
+                break;
+
+            case 3:
+                cout << "Enter value to insert: ";
+                cin >> val;
+                cout << "Enter position: ";
+                cin >> pos;
+                insertPos(val, pos);
+                break;
+
+            case 4:
+                cout << "Enter position to delete: ";
+                cin >> pos;
+                deletePos(pos);
+                break;
+
+            case 5:
+                return 0;
+
+            default:
+                cout << "Invalid choice\n";
+        }
+    }
+}
