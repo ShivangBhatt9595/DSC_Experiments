@@ -1,0 +1,137 @@
+#include <iostream>
+#include <stack>
+#include <algorithm>
+using namespace std;
+
+bool isOperator(char c) {
+    return (c=='+' || c=='-' || c=='*' || c=='/' || c=='^');
+}
+
+int precedence(char c) {
+    if (c=='^') return 3;
+    if (c=='*' || c=='/') return 2;
+    if (c=='+' || c=='-') return 1;
+    return -1;
+}
+
+string infixToPostfix(string s) {
+    stack<char> st;
+    string res;
+
+    for (char c : s) {
+        if (isalnum(c))
+            res += c;
+        else if (c == '(')
+            st.push(c);
+        else if (c == ')') {
+            while (!st.empty() && st.top() != '(') {
+                res += st.top();
+                st.pop();
+            }
+            st.pop();
+        } 
+        else {
+            while (!st.empty() && precedence(st.top()) >= precedence(c)) {
+                res += st.top();
+                st.pop();
+            }
+            st.push(c);
+        }
+    }
+
+    while (!st.empty()) {
+        res += st.top();
+        st.pop();
+    }
+
+    return res;
+}
+
+string infixToPrefix(string s) {
+    reverse(s.begin(), s.end());
+
+    for (char &c : s) {
+        if (c == '(') c = ')';
+        else if (c == ')') c = '(';
+    }
+
+    string postfix = infixToPostfix(s);
+    reverse(postfix.begin(), postfix.end());
+    return postfix;
+}
+
+string prefixToInfix(string s) {
+    stack<string> st;
+
+    for (int i = s.length() - 1; i >= 0; i--) {
+        char c = s[i];
+
+        if (isalnum(c)) {
+            st.push(string(1, c));
+        }
+        else if (isOperator(c)) {
+            string a = st.top(); st.pop();
+            string b = st.top(); st.pop();
+            st.push("(" + a + c + b + ")");
+        }
+    }
+
+    return st.top();
+}
+
+string postfixToInfix(string s) {
+    stack<string> st;
+
+    for (char c : s) {
+        if (isalnum(c)) {
+            st.push(string(1, c));
+        } 
+        else if (isOperator(c)) {
+            string b = st.top(); st.pop();
+            string a = st.top(); st.pop();
+            st.push("(" + a + c + b + ")");
+        }
+    }
+
+    return st.top();
+}
+
+int main() {
+    string exp;
+    int choice;
+
+    while (true) {
+        cout << "\nMENU\n";
+        cout << "1. Infix to Prefix\n";
+        cout << "2. Infix to Postfix\n";
+        cout << "3. Prefix to Infix\n";
+        cout << "4. Postfix to Infix\n";
+        cout << "5. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        if (choice == 5) break;
+
+        cout << "Enter expression: ";
+        cin >> exp;
+
+        switch (choice) {
+            case 1:
+                cout << "Prefix: " << infixToPrefix(exp) << endl;
+                break;
+            case 2:
+                cout << "Postfix: " << infixToPostfix(exp) << endl;
+                break;
+            case 3:
+                cout << "Infix: " << prefixToInfix(exp) << endl;
+                break;
+            case 4:
+                cout << "Infix: " << postfixToInfix(exp) << endl;
+                break;
+            default:
+                cout << "Invalid choice\n";
+        }
+    }
+
+    return 0;
+}
