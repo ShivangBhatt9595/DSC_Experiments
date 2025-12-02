@@ -1,0 +1,89 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* next;
+
+    Node(int val) {
+        data = val;
+        next = NULL;
+    }
+};
+
+// Insert at end (to build sorted lists)
+void insertEnd(Node*& head, int val) {
+    Node* newNode = new Node(val);
+    if (head == NULL) {
+        head = newNode;
+        return;
+    }
+    Node* temp = head;
+    while (temp->next != NULL)
+        temp = temp->next;
+    temp->next = newNode;
+}
+
+// Merging two sorted Linked Lists
+Node* mergeSorted(Node* l1, Node* l2) {
+    // Dummy node technique
+    Node* dummy = new Node(-1);
+    Node* tail = dummy;
+
+    while (l1 != NULL && l2 != NULL) {
+        if (l1->data < l2->data) {
+            tail->next = l1;
+            l1 = l1->next;
+        }
+        else {
+            tail->next = l2;
+            l2 = l2->next;
+        }
+        tail = tail->next;
+    }
+
+    // Attach remaining elements
+    if (l1) tail->next = l1;
+    if (l2) tail->next = l2;
+
+    return dummy->next;
+}
+
+// Display Linked List
+void display(Node* head) {
+    while (head != NULL) {
+        cout << head->data << " ";
+        head = head->next;
+    }
+    cout << endl;
+}
+
+// MAIN
+int main() {
+    Node *l1 = NULL, *l2 = NULL;
+
+    int n1, n2, x;
+
+    cout << "Enter number of elements in List 1: ";
+    cin >> n1;
+    cout << "Enter elements of List 1 (sorted): ";
+    for (int i = 0; i < n1; i++) {
+        cin >> x;
+        insertEnd(l1, x);
+    }
+
+    cout << "Enter number of elements in List 2: ";
+    cin >> n2;
+    cout << "Enter elements of List 2 (sorted): ";
+    for (int i = 0; i < n2; i++) {
+        cin >> x;
+        insertEnd(l2, x);
+    }
+
+    cout << "\nMerged Sorted Linked List: ";
+    Node* merged = mergeSorted(l1, l2);
+    display(merged);
+
+    return 0;
+}
